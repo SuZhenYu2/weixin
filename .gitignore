@@ -1,0 +1,13 @@
+*.class
+
+# Package Files #
+*.war
+*.ear
+*/classes/*
+/catalina.base_IS_UNDEFINED
+/target
+/src/main/resources/env/my
+/*.iml
+/*.classpath
+/.settings
+/*.project
