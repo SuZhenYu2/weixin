@@ -1,6 +1,7 @@
 
 package com.fengjx.modules.wechat.process.executor;
 
+import com.alibaba.fastjson.JSON;
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.commons.utils.CommonUtils;
 import com.fengjx.commons.utils.LogUtil;
@@ -35,12 +36,17 @@ public class EventSubscribeExecutor extends BaseServiceExecutor {
     @Override
     public WxMpXmlOutMessage execute(WxMpXmlMessage inMessage, Record accountRecord,
             WxMpConfigStorage wxMpConfig, WxSession session) {
-        LogUtil.info(LOG, "进入用户关注消息处理器fromUserName=" + inMessage.getFromUserName());
+       
+        LogUtil.info(LOG, "进入用户关注消息处理器fromUserName=" + JSON.toJSONString(inMessage));
         Map<String, Object> attrs = new HashMap<>();
         attrs.put("id", CommonUtils.getPrimaryKey());
         attrs.put("openid", inMessage.getFromUserName());
         attrs.put("subscribe_time", new Date());
         attrs.put("public_account_id", accountRecord.getStr("id"));
+        attrs.put("headimgurl",  inMessage.getPicUrl());
+        attrs.put("nickname",  inMessage.getToUserName());
+        attrs.put("province",  inMessage.getSendLocationInfo().getLabel());
+//        attrs.put("sex", inMessage.getScale());
         userInfoService.insert(attrs);
         return doAction(WxConsts.XML_MSG_EVENT, WxConsts.EVT_SUBSCRIBE, null,
                 accountRecord.getStr("sys_user_id"));
