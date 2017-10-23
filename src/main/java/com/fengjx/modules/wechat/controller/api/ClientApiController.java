@@ -17,6 +17,7 @@ import com.fengjx.modules.wechat.bean.Result;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.WxMpTemplateMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 @Controller
@@ -74,6 +75,8 @@ public class ClientApiController {
 			}
 			WxMpService wxMpService = publicAccountService.getWxMpService(userId);
 			
+			
+ 			
 			WxMpUser wxMpUser =wxMpService.userInfo(openId, "zh_CN");
 			
 			return Result.renderSuccess(wxMpUser);
@@ -84,5 +87,41 @@ public class ClientApiController {
 	 
 
 
+	}
+	@RequestMapping(value = "${clientApi}/sendMsgToWx")
+	@ResponseBody
+	public Result wxMpTemplateMessage(String userId,String openId,String templateId,HttpServletResponse response) throws IOException {
+		
+		
+		try {
+			if(StringUtils.isEmpty(userId)){
+				throw new Exception(" userId 不能为空 ");
+			}
+			
+			
+			if(publicAccountService.getAccountByUserId(userId) == null) {
+				throw new Exception(" 未找到相关配置  ");
+			}
+			WxMpService wxMpService = publicAccountService.getWxMpService(userId);
+			
+			
+			 
+			
+			WxMpTemplateMessage wxMpTemplateMessage = new WxMpTemplateMessage();
+			
+			wxMpTemplateMessage.setToUser(openId);
+			wxMpTemplateMessage.setTemplateId(templateId);
+			 
+			String res =wxMpService.templateSend(wxMpTemplateMessage );
+			
+ 			
+			return Result.renderSuccess(res);
+			
+		} catch (Exception e) {
+			return Result.renderError(e.getMessage());
+		}
+		
+		
+		
 	}
 }
