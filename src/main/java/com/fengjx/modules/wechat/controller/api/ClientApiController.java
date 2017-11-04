@@ -122,7 +122,7 @@ public class ClientApiController {
 			String userId,
 			String openId, 
 			String outTradeNo, 
-			double amt, 
+			Double amt, 
 			String body,
 			String tradeType,
 			String ip, 
@@ -176,6 +176,7 @@ public class ClientApiController {
 			payInfo.put("tradeType", tradeType);
 			payInfo.put("ip", ip);
 			payInfo.put("notifyUrl", notifyUrl);
+			payInfo.put("body", body);
 		  
 			
 			Map<String, String> map   =	wxMpService.getJSSDKPayInfo(payInfo);
