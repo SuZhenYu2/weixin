@@ -168,16 +168,18 @@ public class ClientApiController {
 		    Map<String, String> getJSSDKPayInfo(String openId, String outTradeNo, double amt, String body, String tradeType, String ip, String notifyUrl);
 */
 			//Map map =wxMpService.getJSSDKPayInfo(openId, outTradeNo, amt, body, tradeType, ip, notifyUrl);
+			
+			// "appid", "mch_id", "body", "out_trade_no", "total_fee", "spbill_create_ip", "notify_url", "trade_type"
 			Map<String,String> payInfo=new HashMap<>(); 
 			payInfo.put("userId", userId);
 			payInfo.put("openId", openId);
 			payInfo.put("out_trade_no", outTradeNo);
-			payInfo.put("amt", amt+"");
+			payInfo.put("total_fee", amt+"");
 			payInfo.put("tradeType", tradeType);
 			payInfo.put("ip", ip);
 			payInfo.put("notifyUrl", notifyUrl);
 			payInfo.put("body", body);
-		  
+			 
 			Map<String, String> map =wxMpService.getJSSDKPayInfo( openId,  outTradeNo,  amt,  body,  tradeType,  ip,  notifyUrl);
 //			Map<String, String> map   =	wxMpService.getJSSDKPayInfo(payInfo);
 			

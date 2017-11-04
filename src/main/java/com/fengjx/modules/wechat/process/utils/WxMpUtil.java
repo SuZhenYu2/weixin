@@ -1,16 +1,24 @@
 
 package com.fengjx.modules.wechat.process.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.modules.wechat.bean.WechatPublicAccount;
 import com.fengjx.modules.wechat.process.bean.MyWxMpConfigStorage;
 import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceExt;
 import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceImplExt;
+import com.github.binarywang.wxpay.config.WxPayConfig;
 
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.*;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutImageMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutMusicMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutVideoMessage;
+import me.chanjar.weixin.mp.bean.WxMpXmlOutVoiceMessage;
 
 /**
  * @author fengjx. @date：2015/6/24 0024
@@ -43,6 +51,8 @@ public final class WxMpUtil {
         return config;
     }
 
+   
+  
     /**
      * 通过数据创建ConfigStorage对象
      *
