@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +20,7 @@ import com.fengjx.modules.wechat.bean.Result;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.WxMpTemplateMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
@@ -103,7 +105,10 @@ public class ClientApiController {
 			
 			wxMpTemplateMessage.setToUser(openId);
 			wxMpTemplateMessage.setTemplateId(templateId);
-			 
+			List<WxMpTemplateData> datas =null;
+			
+			wxMpTemplateMessage.setDatas(datas);
+ 			 
 			String res =wxMpService.templateSend(wxMpTemplateMessage );
 			
  			
