@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,14 +12,16 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.fengjx.modules.wechat.bean.Result;
+import com.fengjx.modules.wechat.bean.SendWxMsgBean;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.WxMpTemplateMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
@@ -89,29 +90,27 @@ public class ClientApiController {
 	}
 	@RequestMapping(value = "${clientApi}/sendMsgToWx")
 	@ResponseBody
-	public Result wxMpTemplateMessage(String userId,String openId,String templateId,HttpServletResponse response) throws IOException {
+	public Result wxMpTemplateMessage(@RequestBody String body ,HttpServletResponse response) throws IOException {
 		
-		
+		SendWxMsgBean sendWxMsgBean = JSON.parseObject(body, SendWxMsgBean.class);
 		try {
-			if(StringUtils.isEmpty(userId)){
+			if(StringUtils.isEmpty(sendWxMsgBean.getUserId())){
 				throw new Exception(" userId 不能为空 ");
 			}
-			if(publicAccountService.getAccountByUserId(userId) == null) {
+			if(publicAccountService.getAccountByUserId(sendWxMsgBean.getUserId())  == null) {
 				throw new Exception(" 未找到相关配置  ");
 			}
-			WxMpService wxMpService = publicAccountService.getWxMpService(userId);
+			WxMpService wxMpService = publicAccountService.getWxMpService(sendWxMsgBean.getUserId());
 			
 			WxMpTemplateMessage wxMpTemplateMessage = new WxMpTemplateMessage();
 			
-			wxMpTemplateMessage.setToUser(openId);
-			wxMpTemplateMessage.setTemplateId(templateId);
-			List<WxMpTemplateData> datas =null;
-			
-			wxMpTemplateMessage.setDatas(datas);
+			wxMpTemplateMessage.setToUser(sendWxMsgBean.getOpenId());
+			wxMpTemplateMessage.setTemplateId(sendWxMsgBean.getTemplateId());
+ 			
+			wxMpTemplateMessage.setDatas(sendWxMsgBean.getDatas());
  			 
 			String res =wxMpService.templateSend(wxMpTemplateMessage );
 			
- 			
 			return Result.renderSuccess(res);
 			
 		} catch (Exception e) {
