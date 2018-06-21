@@ -39,6 +39,17 @@ public class TextExecutor extends BaseServiceExecutor {
         Record actionRecord = matching(inMessage.getContent(), keywords);
         // 没有找到匹配规则
         if (null == actionRecord || actionRecord.isEmpty()) {
+        	
+        	if(session.getAttribute("video") == null) {
+        		if(StringUtils.equals(inMessage.getContent(),"1024") ) {
+        			session.setAttribute("video","true");
+        			return doAction("开启成功");
+        		}
+        	}else if(StringUtils.equals(inMessage.getContent(),"close") ) {
+                session.setAttribute("video",null);
+                return doAction("关闭成功");
+            }
+        	
             String res = extHandel(inMessage);
             if (StringUtils.isNotBlank(res)) { // 如果有数据则直接返回
                 return doAction(res);

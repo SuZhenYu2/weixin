@@ -44,10 +44,10 @@ public class StrUtil extends StringUtils {
      * @param str
      * @return
      */
+    static private Pattern p = Pattern.compile("\\r|\n|\r\n");
     public static String replaceLineFeed(String str) {
         String dest = "";
         if (str != null) {
-            Pattern p = Pattern.compile("\\r|\n|\r\n");
             Matcher m = p.matcher(str);
             dest = m.replaceAll("");
         }

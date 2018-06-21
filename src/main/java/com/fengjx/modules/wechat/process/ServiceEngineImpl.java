@@ -56,7 +56,9 @@ public class ServiceEngineImpl implements ServiceEngine {
             }
             WxMpXmlOutMessage outMessage = executor.execute(inMessage, accountRecord, wxMpConfig,
                     WechatContext.getWxsession());
-            // 当道请求上下文里，使用aop记录日志需要用到
+            
+            
+             // 当道请求上下文里，使用aop记录日志需要用到
             WechatContext.setOutMessage(outMessage);
             return processResult(outMessage, inMessage);
         } catch (Exception e) {

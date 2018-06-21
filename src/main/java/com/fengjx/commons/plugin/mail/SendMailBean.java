@@ -14,7 +14,11 @@ import java.util.List;
  */
 public class SendMailBean extends ToStringBase {
 
-    public static final String TYPE_TEXT = "text"; // 文本格式
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	public static final String TYPE_TEXT = "text"; // 文本格式
     public static final String TYPE_HTML = "html"; // html格式
     public static final String TYPE_ATTR = "attr"; // 带有附件
 
