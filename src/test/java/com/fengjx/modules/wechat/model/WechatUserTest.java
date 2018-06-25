@@ -1,18 +1,18 @@
 
 package com.fengjx.modules.wechat.model;
 
-import com.fengjx.commons.utils.JsonUtil;
-
-import com.fengjx.modules.wechat.service.WechatPublicAccountService;
-import me.chanjar.weixin.common.exception.WxErrorException;
-import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.result.WxMpUserList;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.fengjx.commons.utils.JsonUtil;
+import com.fengjx.modules.wechat.service.WechatPublicAccountService;
+
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpUserList;
 
 /**
  * 微信用户测试
@@ -32,7 +32,7 @@ public class WechatUserTest {
         String userid = "93f75794fc6e11e480826036dd68230b";
         WxMpService wxMpService = publicAccountService.getWxMpService(userid);
         try {
-            WxMpUserList userList = wxMpService.userList(null);
+            WxMpUserList userList = wxMpService.getUserService().userList(null);
             System.out.println(JsonUtil.toJson(userList));
         } catch (WxErrorException e) {
             e.printStackTrace();

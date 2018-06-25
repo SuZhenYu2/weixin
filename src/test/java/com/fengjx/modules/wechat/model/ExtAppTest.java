@@ -1,17 +1,19 @@
 
 package com.fengjx.modules.wechat.model;
 
-import com.fengjx.modules.wechat.bean.WechatExtApp;
-import com.fengjx.modules.wechat.service.WechatExtAppService;
-import me.chanjar.weixin.common.api.WxConsts;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.fengjx.modules.wechat.bean.WechatExtApp;
+import com.fengjx.modules.wechat.service.WechatExtAppService;
+
+import me.chanjar.weixin.common.api.WxConsts;
 
 /**
  * @Created by FengJianxin on 2015/9/4.
@@ -33,10 +35,10 @@ public class ExtAppTest {
         record = new WechatExtApp();
         record.setColumns(attrs);
         String[] msgTypes = new String[] {
-                WxConsts.XML_MSG_EVENT, WxConsts.XML_MSG_LOCATION, WxConsts.XML_MSG_TEXT
+                WxConsts.XmlMsgType.EVENT, WxConsts.EventType.LOCATION, WxConsts.XmlMsgType.TEXT
         };
         String[] eventTypes = new String[] {
-                WxConsts.EVT_CLICK, WxConsts.EVT_LOCATION
+                WxConsts.MenuButtonType.CLICK, WxConsts.EventType.CLICK
         };
         wechatExtAppService.saveExtApi(record, msgTypes, eventTypes);
     }
