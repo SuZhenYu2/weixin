@@ -1,24 +1,26 @@
 
 package com.fengjx.modules.wechat.process.executor;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.commons.utils.LogUtil;
 import com.fengjx.modules.api.tuling.client.TulingApiClient;
 import com.fengjx.modules.api.tuling.vo.req.RequestBean;
 import com.fengjx.modules.wechat.bean.WechatRespMsgAction;
 import com.fengjx.modules.wechat.process.utils.ExecutorNameUtil;
+
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.common.session.WxSession;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * 文本消息处理器
@@ -33,22 +35,12 @@ public class TextExecutor extends BaseServiceExecutor {
     @Override
     public WxMpXmlOutMessage execute(WxMpXmlMessage inMessage, Record accountRecord,
             WxMpConfigStorage wxMpConfig, WxSession session) {
-        LogUtil.info(LOG, "进入文本消息处理器fromUserName=" + inMessage.getFromUserName());
+        LogUtil.info(LOG, "进入文本消息处理器fromUserName=" + inMessage.getFromUser());
         List<Map<String, Object>> keywords = msgActionService
                 .loadKeywordActions(accountRecord.getStr("sys_user_id"));
         Record actionRecord = matching(inMessage.getContent(), keywords);
         // 没有找到匹配规则
         if (null == actionRecord || actionRecord.isEmpty()) {
-        	
-        	if(session.getAttribute("video") == null) {
-        		if(StringUtils.equals(inMessage.getContent(),"1024") ) {
-        			session.setAttribute("video","true");
-        			return doAction("开启成功");
-        		}
-        	}else if(StringUtils.equals(inMessage.getContent(),"close") ) {
-                session.setAttribute("video",null);
-                return doAction("关闭成功");
-            }
         	
             String res = extHandel(inMessage);
             if (StringUtils.isNotBlank(res)) { // 如果有数据则直接返回
@@ -94,7 +86,7 @@ public class TextExecutor extends BaseServiceExecutor {
 
     @Override
     public String getExecutorName() {
-        return ExecutorNameUtil.buildName(WxConsts.XML_MSG_TEXT, null);
+        return ExecutorNameUtil.buildName(WxConsts.XmlMsgType.TEXT, null);
     }
 
     /**
@@ -104,7 +96,7 @@ public class TextExecutor extends BaseServiceExecutor {
      * @return
      */
     public String extHandel(WxMpXmlMessage inMessage) {
-        String fromUserName = inMessage.getFromUserName();
+        String fromUserName = inMessage.getFromUser();
         String content = inMessage.getContent();
         // 没有匹配规则的消息，交给图灵机器人处理
         RequestBean req = new RequestBean();

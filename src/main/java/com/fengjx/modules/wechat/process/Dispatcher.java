@@ -1,14 +1,16 @@
 
 package com.fengjx.modules.wechat.process;
 
+import org.apache.log4j.Logger;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.modules.wechat.constants.WechatConst;
 import com.fengjx.modules.wechat.process.bean.WechatContext;
 import com.fengjx.modules.wechat.process.executor.ValidExecutor;
 import com.fengjx.modules.wechat.process.utils.ExecutorNameUtil;
+
 import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import org.apache.log4j.Logger;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 
 /**
  * 业务动作分发器
@@ -35,7 +37,7 @@ public class Dispatcher {
         if (WechatConst.PublicAccount.VALID_STATE_ACTIVATE.equals(valid_state)) {
             return ExecutorNameUtil.buildName(msgType, inMessage.getEvent());
         } else if (WechatConst.PublicAccount.VALID_STATE_EXCESS.equals(valid_state)
-                && WxConsts.XML_MSG_TEXT.equals(msgType)) {// 消息类型是文本，当前账号状态是1，已配置URL到公众平台
+                && WxConsts.XmlMsgType.TEXT.equals(msgType)) {// 消息类型是文本，当前账号状态是1，已配置URL到公众平台
             return ValidExecutor.EXECUTOR_NAME;
         }
         LOGGER.warn("接口未配置到公众平台，此消息不做处理");

@@ -1,6 +1,22 @@
 
 package com.fengjx.modules.wechat.controller.api.interceptor;
 
+import java.io.ByteArrayInputStream;
+import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.commons.utils.DateUtils;
 import com.fengjx.commons.utils.LogUtil;
@@ -11,26 +27,10 @@ import com.fengjx.modules.wechat.process.utils.WxMpUtil;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 import com.fengjx.modules.wechat.service.WechatReqMsgLogService;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-
-import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
 
 public class WechatInterceptor implements HandlerInterceptor {
@@ -52,8 +52,8 @@ public class WechatInterceptor implements HandlerInterceptor {
         WechatReqMsgLog log = new WechatReqMsgLog();
         log.setReqType(inMessage.getMsgType());
         log.setEventType(inMessage.getEvent());
-        log.setToUserName(inMessage.getToUserName());
-        log.setFromUserName(inMessage.getFromUserName());
+        log.setToUserName(inMessage.getToUser());
+        log.setFromUserName(inMessage.getFromUser());
         log.setCreateTime(new Date(inMessage.getCreateTime() * 1000L));
         log.setMsgId(inMessage.getMsgId());
         log.setInTime(new Date(WechatContext.getRequestTime()));

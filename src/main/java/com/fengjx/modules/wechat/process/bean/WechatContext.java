@@ -1,16 +1,16 @@
 
 package com.fengjx.modules.wechat.process.bean;
 
-import com.fengjx.commons.plugin.db.Record;
-
 import org.apache.commons.lang3.StringUtils;
+
+import com.fengjx.commons.plugin.db.Record;
 
 import me.chanjar.weixin.common.session.StandardSessionManager;
 import me.chanjar.weixin.common.session.WxSession;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * 微信请求上下文
@@ -77,10 +77,10 @@ public class WechatContext {
     }
 
     public static WxSession getWxsession() {
-        if (null == getInMessage() || StringUtils.isBlank(getInMessage().getFromUserName())) {
+        if (null == getInMessage() || StringUtils.isBlank(getInMessage().getFromUser())) {
             throw new RuntimeException("getWxsession error...");
         }
-        return sessionManager.getSession(getInMessage().getFromUserName());
+        return sessionManager.getSession(getInMessage().getFromUser());
     }
 
     public static Long getRequestTime() {

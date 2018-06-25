@@ -1,24 +1,21 @@
 
 package com.fengjx.modules.wechat.process.utils;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.modules.wechat.bean.WechatPublicAccount;
 import com.fengjx.modules.wechat.process.bean.MyWxMpConfigStorage;
 import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceExt;
 import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceImplExt;
-import com.github.binarywang.wxpay.config.WxPayConfig;
 
 import me.chanjar.weixin.common.api.WxConsts;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutImageMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMusicMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutVideoMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutVoiceMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutImageMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMusicMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutVideoMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutVoiceMessage;
 
 /**
  * @author fengjx. @date：2015/6/24 0024
@@ -45,9 +42,9 @@ public final class WxMpUtil {
         // 设置微信公众号的EncodingAESKey
         config.setAesKey(account.getEncodingAESKey());
         // 设置微信支付商户ID
-        config.setPartnerId(account.getMerchantId());
+       // config.setPartnerId(account.getMerchantId());
         // 设置微信支付api秘钥
-        config.setPartnerKey(account.getPayKey());
+       // config.setPartnerKey(account.getPayKey());
         return config;
     }
 
@@ -73,9 +70,9 @@ public final class WxMpUtil {
         // 设置微信公众号的EncodingAESKey
         config.setAesKey(accountRecord.getStr("encodingAESKey"));
         // 设置微信支付商户ID
-        config.setPartnerId(accountRecord.getStr("merchant_id"));
+        //config.setPartnerId(accountRecord.getStr("merchant_id"));
         // 设置微信支付api秘钥
-        config.setPartnerKey(accountRecord.getStr("pay_key"));
+        //config.setPartnerKey(accountRecord.getStr("pay_key"));
         return config;
     }
 
@@ -105,20 +102,19 @@ public final class WxMpUtil {
      * @param msgType
      * @return
      */
-    @SuppressWarnings("unchecked")
     public static Class<?> getXmlOutMsgType(String msgType) {
         switch (msgType) {
-            case WxConsts.CUSTOM_MSG_TEXT:
+            case WxConsts.KefuMsgType.TEXT:
                 return WxMpXmlOutTextMessage.class;
-            case WxConsts.CUSTOM_MSG_NEWS:
+            case WxConsts.KefuMsgType.NEWS:
                 return WxMpXmlOutNewsMessage.class;
-            case WxConsts.CUSTOM_MSG_IMAGE:
+            case WxConsts.KefuMsgType.IMAGE:
                 return WxMpXmlOutImageMessage.class;
-            case WxConsts.CUSTOM_MSG_MUSIC:
+            case WxConsts.KefuMsgType.MUSIC:
                 return WxMpXmlOutMusicMessage.class;
-            case WxConsts.CUSTOM_MSG_VIDEO:
+            case WxConsts.KefuMsgType.VIDEO:
                 return WxMpXmlOutVideoMessage.class;
-            case WxConsts.CUSTOM_MSG_VOICE:
+            case WxConsts.KefuMsgType.VOICE:
                 return WxMpXmlOutVoiceMessage.class;
             default:
                 throw new RuntimeException("unkonwn msgType");

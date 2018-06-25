@@ -1,13 +1,11 @@
 
 package com.fengjx.modules.wechat.controller.admin;
 
-import com.fengjx.commons.utils.WebUtil;
-import com.fengjx.modules.common.controller.MyController;
-import com.fengjx.modules.wechat.service.WechatMaterialService;
-import com.fengjx.modules.wechat.service.WechatMenuService;
-import com.fengjx.modules.wechat.service.WechatRespMsgActionService;
-import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +15,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import com.fengjx.commons.utils.WebUtil;
+import com.fengjx.modules.common.controller.MyController;
+import com.fengjx.modules.wechat.service.WechatMaterialService;
+import com.fengjx.modules.wechat.service.WechatMenuService;
+import com.fengjx.modules.wechat.service.WechatRespMsgActionService;
+
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * 消息动作规则
@@ -190,7 +193,7 @@ public class RespMsgActionController extends MyController {
             materialMap.put("xml_data",
                     WxMpXmlOutMessage.TEXT().content((String) reqMap.get("materiaContent"))
                             .fromUser("").toUser("").build().toXml());
-            materialMap.put("msg_type", WxConsts.XML_MSG_TEXT);
+            materialMap.put("msg_type", WxConsts.MassMsgType.TEXT);
         }
         return materialMap;
     }

@@ -1,14 +1,14 @@
 
 package com.fengjx.modules.wechat.process.executor;
 
-import com.fengjx.modules.wechat.process.Dispatcher;
-import com.fengjx.modules.wechat.process.ServiceExecutor;
-
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.fengjx.modules.wechat.process.Dispatcher;
+import com.fengjx.modules.wechat.process.ServiceExecutor;
+
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 
 /**
  * 服务执行器工厂

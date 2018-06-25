@@ -1,17 +1,19 @@
 
 package com.fengjx.modules.wechat.process;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.commons.utils.LogUtil;
 import com.fengjx.modules.wechat.constants.WechatConst;
 import com.fengjx.modules.wechat.process.bean.WechatContext;
 import com.fengjx.modules.wechat.process.executor.ServiceExecutorFactory;
+
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
-import me.chanjar.weixin.mp.bean.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * 微信消息核心处理类
@@ -42,7 +44,7 @@ public class ServiceEngineImpl implements ServiceEngine {
         WxMpXmlMessage inMessage = WechatContext.getInMessage();
         WxMpConfigStorage wxMpConfig = WechatContext.getWxMpConfigStorage();
         try {
-            executor = executorFactory.getExecutorByName(inMessage);
+            executor = executorFactory.getExecutorByName(inMessage.getLocationName());
             if (null == executor) {
                 LogUtil.warn(LOG, "未识别到消息动作分发器，此消息不做处理");
                 return "";
@@ -50,8 +52,8 @@ public class ServiceEngineImpl implements ServiceEngine {
             // 已激活状态，同时fromUserName与公众号ID不符，视为无效请求
             if (WechatConst.PublicAccount.VALID_STATE_ACTIVATE
                     .equals(accountRecord.getStr("valid_state"))
-                    && !inMessage.getToUserName().equals(accountRecord.getStr("account_id"))) {
-                LogUtil.warn(LOG, "ToUserName[" + inMessage.getToUserName() + "]无效，返回空不做响应");
+                    && !inMessage.getToUser().equals(accountRecord.getStr("account_id"))) {
+                LogUtil.warn(LOG, "ToUserName[" + inMessage.getToUser() + "]无效，返回空不做响应");
                 return "";
             }
             WxMpXmlOutMessage outMessage = executor.execute(inMessage, accountRecord, wxMpConfig,
@@ -72,8 +74,8 @@ public class ServiceEngineImpl implements ServiceEngine {
             LogUtil.info(LOG, "outMessage is null");
             return "";
         }
-        outMessage.setFromUserName(inMessage.getToUserName());
-        outMessage.setToUserName(inMessage.getFromUserName());
+        outMessage.setFromUserName(inMessage.getToUser());
+        outMessage.setToUserName(inMessage.getFromUser());
         String encryptType = WechatContext.getEncryptType();
         if ("raw".equals(encryptType)) {
             LogUtil.info(LOG, "encryptType is raw");

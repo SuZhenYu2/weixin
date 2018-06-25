@@ -1,12 +1,12 @@
 
 package com.fengjx.modules.wechat.controller.admin;
 
-import com.fengjx.commons.plugin.db.Page;
-import com.fengjx.commons.utils.JsonUtil;
-import com.fengjx.modules.common.controller.MyController;
-import com.fengjx.modules.sys.bean.SysUser;
-import com.fengjx.modules.wechat.service.WechatMaterialService;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
-import java.util.Map;
+import com.fengjx.commons.plugin.db.Page;
+import com.fengjx.commons.utils.JsonUtil;
+import com.fengjx.modules.common.controller.MyController;
+import com.fengjx.modules.sys.bean.SysUser;
+import com.fengjx.modules.wechat.service.WechatMaterialService;
+
+import me.chanjar.weixin.common.error.WxErrorException;
 
 /**
  * 素材管理

@@ -124,7 +124,7 @@ public class WechatExtAppService extends Model<WechatExtApp> {
         List<Object[]> batchArgs = new ArrayList<>();
         Object[] param;
         for (String msgType : msgTypes) {
-            if (WxConsts.XML_MSG_EVENT.equals(msgType)) {
+            if (WxConsts.XmlMsgType.TEXT.equals(msgType)) {
                 for (String eventType : eventTypes) {
                     param = new Object[4];
                     param[0] = CommonUtils.getPrimaryKey();

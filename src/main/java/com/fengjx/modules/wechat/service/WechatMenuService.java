@@ -20,9 +20,10 @@ import com.fengjx.commons.system.exception.MyRuntimeException;
 import com.fengjx.modules.wechat.bean.WechatMenu;
 
 import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.common.bean.WxMenu;
-import me.chanjar.weixin.common.bean.result.WxError;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.bean.menu.WxMenu;
+import me.chanjar.weixin.common.bean.menu.WxMenuButton;
+import me.chanjar.weixin.common.error.WxError;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 
 /**
@@ -121,7 +122,7 @@ public class WechatMenuService extends Model<WechatMenu> {
         WxMpService wxMpService = publicAccountService.getWxMpService(userId);
         WxMenu menu = loadMenu(userId);
         try {
-            wxMpService.menuCreate(menu);
+            wxMpService.getMenuService().menuCreate(menu);
         } catch (WxErrorException e) {
             WxError error = e.getError();
             throw new MyRuntimeException("菜单发布失败，errcode=" + error.getErrorCode() + " and errmsg="
@@ -139,17 +140,17 @@ public class WechatMenuService extends Model<WechatMenu> {
         List<Map<String, Object>> menuList = loadMenu(null, userId);
         WxMenu menu = new WxMenu();
         if (CollectionUtils.isNotEmpty(menuList)) {
-            WxMenu.WxMenuButton button = null;
+            WxMenuButton button = null;
             for (Map<String, Object> menuMap : menuList) {
-                button = new WxMenu.WxMenuButton();
+                button = new WxMenuButton();
                 button.setName((String) menuMap.get("name"));
                 @SuppressWarnings("unchecked")
                 List<Map<String, Object>> children = (List<Map<String, Object>>) menuMap
                         .get("children");
                 if (null != children) {
-                    WxMenu.WxMenuButton cButton = null;
+                    WxMenuButton cButton = null;
                     for (Map<String, Object> cMap : children) {
-                        cButton = new WxMenu.WxMenuButton();
+                        cButton = new WxMenuButton();
                         setButton(cButton, cMap);
                         button.getSubButtons().add(cButton);
                     }
@@ -162,7 +163,9 @@ public class WechatMenuService extends Model<WechatMenu> {
         return menu;
     }
 
-    /**
+
+
+	/**
      * 递归查询菜单
      *
      * @param id
@@ -199,14 +202,14 @@ public class WechatMenuService extends Model<WechatMenu> {
      * @param button
      * @param menuMap
      */
-    private void setButton(final WxMenu.WxMenuButton button, Map<String, Object> menuMap) {
+    private void setButton(final WxMenuButton button, Map<String, Object> menuMap) {
         String type = (String) menuMap.get("type");
         String name = (String) menuMap.get("name");
         button.setType(type);
         button.setName(name);
-        if (WxConsts.BUTTON_CLICK.equals(type)) {
+        if (WxConsts.MenuButtonType.CLICK.equals(type)) {
             button.setKey((String) menuMap.get("menu_key"));
-        } else if (WxConsts.BUTTON_VIEW.equals(type)) {
+        } else if (WxConsts.MenuButtonType.VIEW.equals(type)) {
             button.setUrl((String) menuMap.get("url"));
         } else {
             throw new MyRuntimeException("菜单【" + name + "】未设置动作");

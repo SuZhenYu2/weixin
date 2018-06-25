@@ -1,6 +1,13 @@
 
 package com.fengjx.modules.wechat.process.executor;
 
+import java.util.Date;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.fengjx.commons.plugin.db.Record;
 import com.fengjx.commons.system.init.SpringBeanFactoryUtil;
 import com.fengjx.commons.utils.LogUtil;
@@ -15,14 +22,9 @@ import com.fengjx.modules.wechat.process.utils.WxMpUtil;
 import com.fengjx.modules.wechat.service.WechatMsgTemplateService;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 import com.fengjx.modules.wechat.service.WechatRespMsgActionService;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Date;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
 
 /**
  * 业务执行器基类

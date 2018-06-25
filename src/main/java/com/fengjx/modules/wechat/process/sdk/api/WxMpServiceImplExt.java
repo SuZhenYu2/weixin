@@ -1,10 +1,10 @@
 
 package com.fengjx.modules.wechat.process.sdk.api;
 
-import me.chanjar.weixin.common.bean.result.WxError;
-import me.chanjar.weixin.common.exception.WxErrorException;
+import me.chanjar.weixin.common.error.WxError;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.util.http.SimplePostRequestExecutor;
-import me.chanjar.weixin.mp.api.WxMpServiceImpl;
+import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.bean.WxMpMassOpenIdsMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpMassSendResult;
 
@@ -14,7 +14,7 @@ public class WxMpServiceImplExt extends WxMpServiceImpl implements WxMpServiceEx
     public WxMpMassSendResult massPreviewMessage(WxMpMassOpenIdsMessage message)
             throws WxErrorException {
         if (message.getToUsers().size() > 1) {
-            WxError wxError = new WxError();
+            WxError wxError = WxError.builder().build();
             wxError.setErrorMsg("预览消息 to User只能有一个");
             throw new WxErrorException(wxError);
         }
@@ -24,7 +24,7 @@ public class WxMpServiceImplExt extends WxMpServiceImpl implements WxMpServiceEx
         // 预览只支持一个to User,去掉toUser list的[]
         json = json.replace("[", "").replace("]", "");
 
-        String responseContent = execute(new SimplePostRequestExecutor(), url, json);
+        String responseContent = execute(SimplePostRequestExecutor.create(this.getRequestHttp()), url, json);
         return WxMpMassSendResult.fromJson(responseContent);
     }
 

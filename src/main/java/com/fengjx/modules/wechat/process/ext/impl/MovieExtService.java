@@ -15,17 +15,18 @@ import me.chanjar.weixin.common.session.WxSession;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlOutVideoMessage;
 
 /**
- * 天气查询接口
- *
- * @author fengjx. @date：2015/7/20 0020
+ * 
+ * @ClassName: MovieExtService 
+ * @Description: 電影插件
+ * @author: suzy2
+ * @date: 2018年6月25日 下午11:06:09
  */
-@Service("weather")
-public class WeatherExtService implements ExtService {
+@Service("movie")
+public class MovieExtService implements ExtService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WeatherExtService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MovieExtService.class);
 
     /**
      * @param inMessage 微信消息

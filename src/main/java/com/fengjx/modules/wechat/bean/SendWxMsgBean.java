@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.alibaba.fastjson.JSON;
 
-import me.chanjar.weixin.mp.bean.WxMpTemplateData;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 
 public class SendWxMsgBean {
 	private String userId;

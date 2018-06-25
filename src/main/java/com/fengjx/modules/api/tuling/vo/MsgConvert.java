@@ -1,18 +1,30 @@
 
 package com.fengjx.modules.api.tuling.vo;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.fengjx.commons.utils.JsonUtil;
-import com.fengjx.modules.api.tuling.vo.resp.*;
-
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutTextMessage;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import java.util.List;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.fengjx.commons.utils.JsonUtil;
+import com.fengjx.modules.api.tuling.vo.resp.BaseRespBean;
+import com.fengjx.modules.api.tuling.vo.resp.FlightBean;
+import com.fengjx.modules.api.tuling.vo.resp.HotelBean;
+import com.fengjx.modules.api.tuling.vo.resp.LinkBean;
+import com.fengjx.modules.api.tuling.vo.resp.ListBaseBean;
+import com.fengjx.modules.api.tuling.vo.resp.ListBean;
+import com.fengjx.modules.api.tuling.vo.resp.NewsBean;
+import com.fengjx.modules.api.tuling.vo.resp.PriceBean;
+import com.fengjx.modules.api.tuling.vo.resp.ResutlCode;
+import com.fengjx.modules.api.tuling.vo.resp.SoftBean;
+import com.fengjx.modules.api.tuling.vo.resp.TextBean;
+import com.fengjx.modules.api.tuling.vo.resp.TrainBean;
+import com.fengjx.modules.api.tuling.vo.resp.VideoBean;
+
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 
 /**
  *{

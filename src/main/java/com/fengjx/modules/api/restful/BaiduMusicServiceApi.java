@@ -1,20 +1,20 @@
 
 package com.fengjx.modules.api.restful;
 
-import com.fengjx.commons.utils.HttpUtil;
-import com.fengjx.commons.utils.LogUtil;
-
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMusicMessage;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
+import com.fengjx.commons.utils.HttpUtil;
+import com.fengjx.commons.utils.LogUtil;
+
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMusicMessage;
 
 /**
  * 百度音乐搜索API操作类

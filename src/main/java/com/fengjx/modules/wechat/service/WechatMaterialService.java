@@ -1,31 +1,6 @@
 
 package com.fengjx.modules.wechat.service;
 
-import com.fengjx.commons.ext.qiniu.QiNiuUti;
-import com.fengjx.commons.plugin.db.Model;
-import com.fengjx.commons.plugin.db.Page;
-import com.fengjx.commons.plugin.freemarker.FreemarkerUtil;
-import com.fengjx.commons.utils.*;
-import com.fengjx.modules.common.constants.AppConfig;
-import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceExt;
-import me.chanjar.weixin.common.api.WxConsts;
-import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
-import me.chanjar.weixin.common.exception.WxErrorException;
-import me.chanjar.weixin.mp.bean.WxMpMassGroupMessage;
-import me.chanjar.weixin.mp.bean.WxMpMassNews;
-import me.chanjar.weixin.mp.bean.WxMpMassOpenIdsMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-import me.chanjar.weixin.mp.bean.result.WxMpMassSendResult;
-import me.chanjar.weixin.mp.bean.result.WxMpMassUploadResult;
-import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import com.fengjx.modules.wechat.bean.WechatMaterial;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +9,38 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.fengjx.commons.ext.qiniu.QiNiuUti;
+import com.fengjx.commons.plugin.db.Model;
+import com.fengjx.commons.plugin.db.Page;
+import com.fengjx.commons.plugin.freemarker.FreemarkerUtil;
+import com.fengjx.commons.utils.CommonUtils;
+import com.fengjx.commons.utils.DateUtils;
+import com.fengjx.commons.utils.FileUtil;
+import com.fengjx.commons.utils.HttpUtil;
+import com.fengjx.commons.utils.LogUtil;
+import com.fengjx.modules.common.constants.AppConfig;
+import com.fengjx.modules.wechat.bean.WechatMaterial;
+import com.fengjx.modules.wechat.process.sdk.api.WxMpServiceExt;
+
+import me.chanjar.weixin.common.api.WxConsts;
+import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
+import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.bean.WxMpMassOpenIdsMessage;
+import me.chanjar.weixin.mp.bean.WxMpMassTagMessage;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialNews.WxMpMaterialNewsArticle;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.result.WxMpMassSendResult;
+import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
 
 /**
  * Autu Generated .
@@ -168,17 +175,17 @@ public class WechatMaterialService extends Model<WechatMaterial> {
 
     public void previewMsg(final List<Map<String, Object>> contents, String xmlData, String userId,
             String wxUserId) throws WxErrorException {
-        WxMpMassUploadResult uploadResult = uploadMedia(contents, xmlData, userId);
+        WxMpMaterialUploadResult uploadResult = uploadMedia(contents, xmlData, userId);
         WxMpServiceExt mpService = (WxMpServiceExt) publicAccountService.getWxMpService(userId);
         WxMpMassOpenIdsMessage massMessage = new WxMpMassOpenIdsMessage();
-        massMessage.setMsgType(WxConsts.MASS_MSG_NEWS);
+        massMessage.setMsgType(WxConsts.MassMsgType.MPNEWS);
         massMessage.setMediaId(uploadResult.getMediaId());
         massMessage.getToUsers().add(wxUserId);// .add("oaXuSv4_0mXijafuTFuJ6DqeX7Jo");
         WxMpMassSendResult sendResult = mpService.massPreviewMessage(massMessage);
         LOG.debug("send mass message news:" + sendResult);
     }
 
-    private WxMpMassUploadResult uploadMedia(final List<Map<String, Object>> contents,
+    private WxMpMaterialUploadResult uploadMedia(final List<Map<String, Object>> contents,
             String xmlData, String userId) throws WxErrorException {
         WxMpXmlOutNewsMessage outNewsMessage = XStreamTransformer
                 .fromXml(WxMpXmlOutNewsMessage.class, xmlData);
@@ -186,24 +193,25 @@ public class WechatMaterialService extends Model<WechatMaterial> {
 
         // 微信服务器交互
         WxMpServiceExt mpService = (WxMpServiceExt) publicAccountService.getWxMpService(userId);
-        WxMpMassNews massNews = new WxMpMassNews();
+        WxMpMaterialNews massNews = new WxMpMaterialNews();
 
         int i = 0;
         for (WxMpXmlOutNewsMessage.Item item : outNewsMessage.getArticles()) {
             if (contents == null || contents.isEmpty()) {
-                WxMpMassNews.WxMpMassNewsArticle art = new WxMpMassNews.WxMpMassNewsArticle();
+                WxMpMaterialNewsArticle art = new WxMpMaterialNewsArticle();
                 // art.setAuthor(AppConfig.APP_NAME);
                 art.setShowCoverPic(false);
                 // art.setContentSourceUrl(contentSourceUrl);;
                 art.setTitle(item.getTitle());
                 art.setContent("Test");
+                //massNews.addArticle(article);
                 massNews.addArticle(art);
                 break;
             }
             Map<String, Object> content = contents.get(i);
             // LOG.debug("content:" + content);
             String picUrl = item.getPicUrl();
-            WxMpMassNews.WxMpMassNewsArticle art = new WxMpMassNews.WxMpMassNewsArticle();
+            WxMpMaterialNewsArticle art = new WxMpMaterialNewsArticle();
             art.setAuthor(AppConfig.APP_NAME);
             art.setShowCoverPic(false);
             // art.setContentSourceUrl(contentSourceUrl);;
@@ -218,8 +226,8 @@ public class WechatMaterialService extends Model<WechatMaterial> {
                 try {
                     // 上传图片获得 media id
                     is = new URL(picUrl).openStream();
-                    uploadMediaResult = mpService.mediaUpload(WxConsts.MEDIA_IMAGE,
-                            WxConsts.FILE_JPG, is);
+                    uploadMediaResult = mpService.getMaterialService().mediaUpload(WxConsts.XmlMsgType.IMAGE,
+                            WxConsts.MediaFileType.IMAGE, is);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                     LogUtil.error(LOG, e.getMessage(), e);
@@ -237,18 +245,18 @@ public class WechatMaterialService extends Model<WechatMaterial> {
             i++;
         }
         // upload news and get media id
-        WxMpMassUploadResult uploadResult = mpService.massNewsUpload(massNews);
+        WxMpMaterialUploadResult uploadResult = mpService.getMaterialService().materialNewsUpload(massNews);
         return uploadResult;
     }
 
     public void sendGroupMsg(List<Map<String, Object>> contents, String xmlData, String userId)
             throws WxErrorException {
-        WxMpMassUploadResult uploadResult = uploadMedia(contents, xmlData, userId);
+        WxMpMaterialUploadResult uploadResult = uploadMedia(contents, xmlData, userId);
         WxMpServiceExt mpService = (WxMpServiceExt) publicAccountService.getWxMpService(userId);
-        WxMpMassGroupMessage message = new WxMpMassGroupMessage();
-        message.setMsgtype(WxConsts.MASS_MSG_NEWS);
+        WxMpMassTagMessage message = new WxMpMassTagMessage();
+        message.setMsgType(WxConsts.XmlMsgType.TEXT);
         message.setMediaId(uploadResult.getMediaId());
-        WxMpMassSendResult result = mpService.massGroupMessageSend(message);
+        WxMpMassSendResult result = mpService.getMassMessageService().massGroupMessageSend(message);
         LOG.debug(result.toString());
     }
 

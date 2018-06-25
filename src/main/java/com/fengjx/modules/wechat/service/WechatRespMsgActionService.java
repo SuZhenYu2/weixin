@@ -1,6 +1,20 @@
 
 package com.fengjx.modules.wechat.service;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.stereotype.Component;
+
 import com.fengjx.commons.plugin.cache.IDataLoader;
 import com.fengjx.commons.plugin.cache.ehcache.EhCacheUtil;
 import com.fengjx.commons.plugin.db.Model;
@@ -15,20 +29,8 @@ import com.fengjx.modules.wechat.bean.WechatExtApp;
 import com.fengjx.modules.wechat.bean.WechatMaterial;
 import com.fengjx.modules.wechat.bean.WechatMenu;
 import com.fengjx.modules.wechat.bean.WechatRespMsgAction;
-import me.chanjar.weixin.common.api.WxConsts;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.stereotype.Component;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import me.chanjar.weixin.common.api.WxConsts;
 
 /**
  * Autu Generated .
@@ -87,7 +89,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
         sql.append(getTableName(WechatMaterial.class));
         sql.append(" where id = (select material_id from ").append(getTableName());
         sql.append(" where id = ?) and msg_type = ?");
-        execute(sql.toString(), actionId, WxConsts.CUSTOM_MSG_TEXT);
+        execute(sql.toString(), actionId, WxConsts.KefuMsgType.TEXT);
     }
 
     /**
@@ -199,7 +201,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
             sql.append(" and a.key_word = ?");
             parameters.add(key_word);
         }
-        if (WxConsts.XML_MSG_TEXT.equals(req_type) && StringUtils.isNotBlank(fuzzy)) {
+        if (WxConsts.XmlMsgType.TEXT.equals(req_type) && StringUtils.isNotBlank(fuzzy)) {
             sql.append(" and a.fuzzy = ?");
             parameters.add(fuzzy);
         }
@@ -222,7 +224,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
                         sql.append(
                                 " where a.user_id = ? and a.req_type = ? order by a.order_no");
                         parameters.add(userId);
-                        parameters.add(WxConsts.XML_MSG_TEXT);
+                        parameters.add(WxConsts.XmlMsgType.TEXT);
                         return findList(sql.toString(), parameters.toArray());
                     }
                 });
@@ -274,7 +276,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
         menuMap.put("update_time", now);
         String menuType = (String) menuMap.get("type");
         // 菜单类型为click
-        if (menuType.equals(WxConsts.BUTTON_CLICK)) {
+        if (menuType.equals(WxConsts.MenuButtonType.CLICK)) {
             menuMap.put("menu_key", "key_" + menuId);
             menuMap.put("url", "");
             // 请求关键字 or 菜单点击key
@@ -285,7 +287,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
                 // 消息响应类型
                 String resp_type = (String) materialMap.get("msg_type");
                 // 消息回复类型是文字，则先将文字信息保存到素材表
-                if (WxConsts.XML_MSG_TEXT.equals(resp_type)) {
+                if (WxConsts.XmlMsgType.TEXT.equals(resp_type)) {
                     materialMap.put("id", CommonUtils.getPrimaryKey());
                     materialMap.put("in_time", now);
                     insert(WechatMaterial.class, materialMap);
@@ -293,7 +295,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
             }
             actionMap.put("material_id", materialMap.get("id"));
             insert(actionMap);
-        } else if (menuType.equals(WxConsts.BUTTON_VIEW)) {
+        } else if (menuType.equals(WxConsts.MenuButtonType.VIEW)) {
             menuMap.put("menu_key", null);
         }
         update(WechatMenu.class, menuMap);
@@ -318,7 +320,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
             // 消息响应类型
             String resp_type = (String) materialMap.get("msg_type");
             // 消息回复类型是文字，则先将文字信息保存到素材表
-            if (WxConsts.XML_MSG_TEXT.equals(resp_type)) {
+            if (WxConsts.XmlMsgType.TEXT.equals(resp_type)) {
                 materialMap.put("id", CommonUtils.getPrimaryKey());
                 materialMap.put("in_time", now);
                 insert(WechatMaterial.class, materialMap);
@@ -379,7 +381,7 @@ public class WechatRespMsgActionService extends Model<WechatRespMsgAction> {
         String eventType = (String) actionMap.get("event_type");
         String keyword = (String) actionMap.get("key_word");
         String userId = (String) actionMap.get("user_id");
-        if (WxConsts.XML_MSG_TEXT.equals(reqType)) {
+        if (WxConsts.XmlMsgType.TEXT.equals(reqType)) {
             EhCacheUtil.remove(AppConfig.EhcacheName.WECHAT_KEYWORD_ACTION_CACHE, userId);
         } else {
             EhCacheUtil.remove(AppConfig.EhcacheName.WECHAT_ACTION_CACHE,

@@ -1,16 +1,16 @@
 
 package com.fengjx.modules.api.restful;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fengjx.commons.utils.HttpUtil;
 import com.fengjx.commons.utils.LogUtil;
 
-import me.chanjar.weixin.mp.bean.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.WxMpXmlOutNewsMessage;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
 
 /**
  * 优酷视频搜索

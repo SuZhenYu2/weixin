@@ -22,9 +22,9 @@ import com.fengjx.modules.wechat.bean.SendWxMsgBean;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
-import me.chanjar.weixin.mp.bean.WxMpTemplateMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 @Controller
 public class ClientApiController {
 	@Autowired
@@ -48,10 +48,10 @@ public class ClientApiController {
 			WxMpService wxMpService = publicAccountService.getWxMpService(userId);
 
 
-			WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.qrCodeCreateTmpTicket(10000, 10000);
+			WxMpQrCodeTicket wxMpQrCodeTicket = wxMpService.getQrcodeService().qrCodeCreateTmpTicket(10000, 10000);
 
 			wxMpQrCodeTicket.setUrl(param);
-			File file =	wxMpService.qrCodePicture(wxMpQrCodeTicket);
+			File file =	wxMpService.getQrcodeService().qrCodePicture(wxMpQrCodeTicket);
 			os.write(FileUtils.readFileToByteArray(file));
 			os.flush();
 			return;
@@ -77,7 +77,7 @@ public class ClientApiController {
 			}
 			WxMpService wxMpService = publicAccountService.getWxMpService(userId);
  			
-			WxMpUser wxMpUser =wxMpService.userInfo(openId, "zh_CN");
+			WxMpUser wxMpUser =wxMpService.getUserService().userInfo(openId, "zh_CN");
 			
 			return Result.renderSuccess(wxMpUser);
 
@@ -107,9 +107,8 @@ public class ClientApiController {
 			wxMpTemplateMessage.setToUser(sendWxMsgBean.getOpenId());
 			wxMpTemplateMessage.setTemplateId(sendWxMsgBean.getTemplateId());
  			
-			wxMpTemplateMessage.setDatas(sendWxMsgBean.getDatas());
- 			 
-			String res =wxMpService.templateSend(wxMpTemplateMessage );
+			wxMpTemplateMessage.setData(sendWxMsgBean.getDatas());
+ 			String res =wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage );
 			
 			return Result.renderSuccess(res);
 			
@@ -120,6 +119,8 @@ public class ClientApiController {
 		
 		
 	}
+	
+
 	@RequestMapping(value = "${clientApi}/getPayInfo")
 	@ResponseBody
 	public Result getPayInfo(
@@ -183,11 +184,10 @@ public class ClientApiController {
 			payInfo.put("ip", ip);
 			payInfo.put("notifyUrl", notifyUrl);
 			payInfo.put("body", body);
-			 
-			Map<String, String> map =wxMpService.getJSSDKPayInfo( openId,  outTradeNo,  amt,  body,  tradeType,  ip,  notifyUrl);
+			//Map<String, String> map =wxMpService.getegetJSSDKPayInfo( openId,  outTradeNo,  amt,  body,  tradeType,  ip,  notifyUrl);
 //			Map<String, String> map   =	wxMpService.getJSSDKPayInfo(payInfo);
 			
-			return Result.renderSuccess(map);
+			return Result.renderSuccess(null);
 			
 		} catch (Exception e) {
 			return Result.renderError(e.getMessage());
