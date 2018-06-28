@@ -10,6 +10,7 @@ import com.fengjx.commons.utils.LogUtil;
 import com.fengjx.modules.wechat.constants.WechatConst;
 import com.fengjx.modules.wechat.process.bean.WechatContext;
 import com.fengjx.modules.wechat.process.executor.ServiceExecutorFactory;
+import com.fengjx.modules.wechat.process.utils.ExecutorNameUtil;
 
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -44,7 +45,7 @@ public class ServiceEngineImpl implements ServiceEngine {
         WxMpXmlMessage inMessage = WechatContext.getInMessage();
         WxMpConfigStorage wxMpConfig = WechatContext.getWxMpConfigStorage();
         try {
-            executor = executorFactory.getExecutorByName(inMessage.getLocationName());
+            executor = executorFactory.getExecutorByName(ExecutorNameUtil.buildName(inMessage.getMsgType(), inMessage.getEvent()));
             if (null == executor) {
                 LogUtil.warn(LOG, "未识别到消息动作分发器，此消息不做处理");
                 return "";

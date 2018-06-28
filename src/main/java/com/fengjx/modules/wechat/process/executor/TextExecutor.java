@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,9 +41,10 @@ public class TextExecutor extends BaseServiceExecutor {
         // 没有找到匹配规则
         if (null == actionRecord || actionRecord.isEmpty()) {
         	
-            String res = extHandel(inMessage);
-            if (StringUtils.isNotBlank(res)) { // 如果有数据则直接返回
-                return doAction(res);
+            WxMpXmlOutMessage res = extHandel(inMessage);
+             
+            if (res != null ) { // 如果有数据则直接返回
+                return res;
             }
         }
         return doAction(actionRecord);
@@ -95,13 +95,15 @@ public class TextExecutor extends BaseServiceExecutor {
      * @param inMessage
      * @return
      */
-    public String extHandel(WxMpXmlMessage inMessage) {
+    public WxMpXmlOutMessage extHandel(WxMpXmlMessage inMessage) {
         String fromUserName = inMessage.getFromUser();
         String content = inMessage.getContent();
         // 没有匹配规则的消息，交给图灵机器人处理
         RequestBean req = new RequestBean();
         req.setInfo(content);
         req.setUserid(fromUserName);
-        return TulingApiClient.call2WechatMsg(req);
+        WxMpXmlOutMessage wxMpXmlOutMessage =TulingApiClient.call2WechatMsg(req);
+        wxMpXmlOutMessage.setCreateTime(System.currentTimeMillis());
+        return wxMpXmlOutMessage;
     }
 }

@@ -6,6 +6,7 @@ import com.fengjx.commons.plugin.db.Record;
 import me.chanjar.weixin.common.session.WxSession;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 
 /**
  * 业务扩展接口
@@ -22,7 +23,7 @@ public interface ExtService {
      * @param session 微信session
      * @return
      */
-    String execute(WxMpXmlMessage inMessage, Record accountRecord,
+    WxMpXmlOutMessage execute(WxMpXmlMessage inMessage, Record accountRecord,
             WxMpConfigStorage wxMpConfig, WxSession session);
 
 }

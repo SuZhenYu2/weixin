@@ -15,7 +15,6 @@ import me.chanjar.weixin.common.session.WxSession;
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlOutVideoMessage;
 
 /**
  * 天气查询接口
@@ -35,7 +34,7 @@ public class WeatherExtService implements ExtService {
      * @return
      */
     @Override
-    public String execute(WxMpXmlMessage inMessage, Record accountRecord,
+    public WxMpXmlOutMessage execute(WxMpXmlMessage inMessage, Record accountRecord,
             WxMpConfigStorage wxMpConfig, WxSession session) {
         String resContent = "";
         if (WxConsts.XmlMsgType.TEXT.equals(inMessage.getMsgType())) {
@@ -48,7 +47,7 @@ public class WeatherExtService implements ExtService {
                 resContent = WeatherServiceApi.queryhWeather(keyWord);
             }
             return WxMpXmlOutMessage.TEXT().content(resContent).fromUser("").toUser("").build()
-                    .toXml();
+                    ;
         }
         if (WxConsts.XmlMsgType.LOCATION.equals(inMessage.getMsgType())) {
             // 接收用户发送的文本消息内容
@@ -59,7 +58,7 @@ public class WeatherExtService implements ExtService {
             LogUtil.info(LOG, "天气查询：" + keyWord + ", label=" + label);
             resContent = WeatherServiceApi.queryhWeather(keyWord);
             return WxMpXmlOutMessage.TEXT().content(resContent).fromUser("").toUser("").build()
-                    .toXml();
+                    ;
         } else {
             throw new RuntimeException("请求的消息类型不支持该接口");
         }

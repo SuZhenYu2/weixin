@@ -4,6 +4,9 @@ package com.fengjx.modules.api.tuling.client;
 import com.fengjx.commons.utils.HttpUtil;
 import com.fengjx.modules.api.tuling.vo.MsgConvert;
 import com.fengjx.modules.api.tuling.vo.resp.BaseRespBean;
+
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+
 import com.fengjx.modules.api.tuling.vo.req.RequestBean;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -40,7 +43,7 @@ public class TulingApiClient {
         return HttpUtil.get(URL, param);
     }
 
-    public static String call2WechatMsg(RequestBean request) {
+    public static WxMpXmlOutMessage call2WechatMsg(RequestBean request) {
         return MsgConvert.toWechatMsg(call2Bean(request));
     }
 

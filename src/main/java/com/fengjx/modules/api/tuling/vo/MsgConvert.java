@@ -94,12 +94,14 @@ public class MsgConvert {
         return res;
     }
 
-    public static String toWechatMsg(BaseRespBean bean) {
+    public static WxMpXmlOutMessage toWechatMsg(BaseRespBean bean) {
         WxMpXmlOutNewsMessage msg = WxMpXmlOutMessage.NEWS()
                 .fromUser("")
                 .toUser("").build();
 
         WxMpXmlOutNewsMessage.Item item = null;
+        
+        Integer size =9;
         if (ResutlCode.TEXT.getCode().equals(bean.getCode())) {
             TextBean text = (TextBean) bean;
             WxMpXmlOutTextMessage m = new WxMpXmlOutTextMessage();
@@ -107,17 +109,18 @@ public class MsgConvert {
             m.setCreateTime(0L);
             m.setFromUserName("");
             m.setToUserName("");
-            return m.toXml();
+            return m;
         } else if (ResutlCode.NEWS.getCode().equals(bean.getCode())) {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 10; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     NewsBean news = (NewsBean) list.get(i);
                     item = new WxMpXmlOutNewsMessage.Item();
                     item.setPicUrl(news.getIcon());
-                    item.setTitle(news.getArticle());
+                    item.setTitle(news.getSource());
                     item.setUrl(news.getDetailurl());
+                    item.setDescription(news.getArticle());
                     msg.addArticle(item);
                 }
             }
@@ -125,7 +128,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 10; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     FlightBean flight = (FlightBean) list.get(i);
                     desc += "航班：" + flight.getFlight();
@@ -144,7 +147,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 10; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     HotelBean hotel = (HotelBean) list.get(i);
                     desc += "酒店名称：" + hotel.getName();
@@ -163,7 +166,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 11; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     PriceBean price = (PriceBean) list.get(i);
                     desc += "名称：" + price.getName();
@@ -179,7 +182,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 11; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     SoftBean soft = (SoftBean) list.get(i);
                     desc += "软件名称：" + soft.getName();
@@ -195,7 +198,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 11; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     TrainBean train = (TrainBean) list.get(i);
                     item = new WxMpXmlOutNewsMessage.Item();
@@ -209,7 +212,7 @@ public class MsgConvert {
             ListBean listBean = (ListBean) bean;
             List<ListBaseBean> list = listBean.getList();
             if (CollectionUtils.isNotEmpty(list)) {
-                for (int i = 0; i < list.size() && i < 11; i++) {
+                for (int i = 0; i < list.size() && i < size; i++) {
                     String desc = "";
                     VideoBean video = (VideoBean) list.get(i);
                     desc += "名称：" + video.getName();
@@ -236,7 +239,7 @@ public class MsgConvert {
             m.setCreateTime(0L);
             m.setFromUserName("");
             m.setToUserName("");
-            return m.toXml();
+            return m;
         }
         if (CollectionUtils.isEmpty(msg.getArticles())) {
             item = new WxMpXmlOutNewsMessage.Item();
@@ -244,7 +247,7 @@ public class MsgConvert {
             item.setDescription("暂无相关数据。");
             msg.addArticle(item);
         }
-        return msg.toXml();
+        return msg;
     }
 
     /**

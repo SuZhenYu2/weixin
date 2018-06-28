@@ -17,13 +17,13 @@ import com.fengjx.modules.wechat.process.ServiceExecutor;
 import com.fengjx.modules.wechat.process.ServiceExecutorNameWire;
 import com.fengjx.modules.wechat.process.bean.WechatContext;
 import com.fengjx.modules.wechat.process.ext.ExtService;
-import com.fengjx.modules.wechat.process.utils.MessageUtil;
-import com.fengjx.modules.wechat.process.utils.WxMpUtil;
 import com.fengjx.modules.wechat.service.WechatMsgTemplateService;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
 import com.fengjx.modules.wechat.service.WechatRespMsgActionService;
 
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutNewsMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutTextMessage;
 import me.chanjar.weixin.mp.util.xml.XStreamTransformer;
 
 /**
@@ -78,8 +78,12 @@ public abstract class BaseServiceExecutor implements ServiceExecutor, ServiceExe
         String actionType = actionRecord.getStr("action_type");
         if (WechatRespMsgAction.ACTION_TYPE_MATERIAL.equals(actionType)) { // 从素材取数据
             res = actionRecord.getStr("xml_data");
+            
+            WxMpXmlOutNewsMessage wxMpXmlOutNewsMessage =XStreamTransformer.fromXml(WxMpXmlOutNewsMessage.class , res);
+            return wxMpXmlOutNewsMessage;
         } else if (WechatRespMsgAction.ACTION_TYPE_API.equals(actionType)) { // 从接口返回数据
-            res = busiappHandle(actionRecord.getStr("bean_name"));
+        	WxMpXmlOutMessage  resMsg = busiappHandle(actionRecord.getStr("bean_name"));
+        	return resMsg;
         }
         return doAction(res);
     }
@@ -94,10 +98,14 @@ public abstract class BaseServiceExecutor implements ServiceExecutor, ServiceExe
         if (StringUtils.isBlank(xmlMsg)) {
             return null;
         }
-        xmlMsg = xmlMsg.replaceAll("\\<CreateTime>(.*?)\\</CreateTime>",
-                "<CreateTime><![CDATA[" + new Date().getTime() + "]]></CreateTime>");
-        return (WxMpXmlOutMessage) XStreamTransformer.fromXml(
-                WxMpUtil.getXmlOutMsgType(MessageUtil.parseMsgType(xmlMsg)), xmlMsg);
+      /*  xmlMsg = xmlMsg.replaceAll("\\<CreateTime>(.*?)\\</CreateTime>",
+                "<CreateTime><![CDATA[" + new Date().getTime() + "]]></CreateTime>");*/
+        WxMpXmlOutTextMessage wxMpXmlOutMessage = XStreamTransformer.fromXml(WxMpXmlOutTextMessage.class
+                 , xmlMsg);
+        
+        wxMpXmlOutMessage.setCreateTime(new Date().getTime());
+        
+        return wxMpXmlOutMessage;
         // 替换参数
         // respMessage = MessageUtil.replaceMsgByReg(respMessage,
         // WechatContext.getWechatPostMap());
@@ -110,10 +118,10 @@ public abstract class BaseServiceExecutor implements ServiceExecutor, ServiceExe
      * @param beanName
      * @return
      */
-    protected String busiappHandle(String beanName) {
+    protected WxMpXmlOutMessage busiappHandle(String beanName) {
         // 从spring中拿到业务bean
         ExtService ext = SpringBeanFactoryUtil.getBean(beanName);
-        String res = ext.execute(WechatContext.getInMessage(), WechatContext.getInMessageRecord(),
+        WxMpXmlOutMessage res = ext.execute(WechatContext.getInMessage(), WechatContext.getInMessageRecord(),
                 WechatContext.getWxMpConfigStorage(), WechatContext.getWxsession());
         LogUtil.debug(LOG, "beanName：" + beanName + " execute");
         return res;
