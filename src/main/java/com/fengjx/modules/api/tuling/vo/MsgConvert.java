@@ -101,7 +101,7 @@ public class MsgConvert {
 
         WxMpXmlOutNewsMessage.Item item = null;
         
-        Integer size =9;
+        Integer size =5;
         if (ResutlCode.TEXT.getCode().equals(bean.getCode())) {
             TextBean text = (TextBean) bean;
             WxMpXmlOutTextMessage m = new WxMpXmlOutTextMessage();
@@ -118,7 +118,7 @@ public class MsgConvert {
                     NewsBean news = (NewsBean) list.get(i);
                     item = new WxMpXmlOutNewsMessage.Item();
                     item.setPicUrl(news.getIcon());
-                    item.setTitle(news.getSource());
+                    item.setTitle(news.getArticle());
                     item.setUrl(news.getDetailurl());
                     item.setDescription(news.getArticle());
                     msg.addArticle(item);

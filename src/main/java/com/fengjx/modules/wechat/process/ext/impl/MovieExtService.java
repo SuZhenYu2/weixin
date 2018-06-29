@@ -53,6 +53,9 @@ public class MovieExtService implements ExtService {
 
 		WxMpXmlOutNewsMessage.Item item = null;
 		for (BaseVideo baseVideo : list) {
+			if(news.getArticleCount()>5){
+				break;
+			}
 			item = new WxMpXmlOutNewsMessage.Item();
 			item.setDescription(baseVideo.getDescription());
 			item.setPicUrl(baseVideo.getImageUrl());
