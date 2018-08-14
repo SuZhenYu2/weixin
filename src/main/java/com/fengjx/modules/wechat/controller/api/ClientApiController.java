@@ -20,6 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.fengjx.modules.wechat.bean.Result;
 import com.fengjx.modules.wechat.bean.SendWxMsgBean;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
+import com.github.binarywang.wxpay.service.WxPayService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
@@ -61,6 +62,38 @@ public class ClientApiController {
 		os.write(res.getBytes());
 		os.flush();
 
+	}
+	/**
+	 * 客户端 调用微信  接口认证
+	 * @throws IOException 
+	 */
+	@RequestMapping(value = "${clientApi}/getPayUrl")
+	public void getPayUrl(String userId,String param,HttpServletResponse response) throws IOException {
+		String res =null;
+		OutputStream os =response.getOutputStream();
+		
+		
+		
+		try {
+			
+			if(StringUtils.isEmpty(userId)){
+				throw new Exception(" userId 不能为空 ");
+			}
+			if(publicAccountService.getAccountByUserId(userId) == null) {
+				throw new Exception(" 未找到相关配置  ");
+			}
+			WxPayService wxPayService = publicAccountService.getWxPayService(userId);
+			
+			 byte[] n=	wxPayService.createScanPayQrcodeMode1(param,null,400);
+ 			os.write(n);
+			os.flush();
+			return;
+		} catch (Exception e) {
+			res =e.getMessage();
+		}
+		os.write(res.getBytes());
+		os.flush();
+		
 	}
 	@RequestMapping(value = "${clientApi}/getUserInfo")
 	@ResponseBody

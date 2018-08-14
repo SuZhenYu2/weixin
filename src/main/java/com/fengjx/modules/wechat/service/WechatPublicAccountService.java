@@ -1,6 +1,14 @@
 
 package com.fengjx.modules.wechat.service;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fengjx.commons.plugin.cache.ehcache.EhCacheUtil;
 import com.fengjx.commons.plugin.db.Model;
 import com.fengjx.commons.plugin.db.Record;
@@ -12,16 +20,12 @@ import com.fengjx.modules.common.constants.AppConfig;
 import com.fengjx.modules.wechat.bean.WechatPublicAccount;
 import com.fengjx.modules.wechat.constants.WechatConst;
 import com.fengjx.modules.wechat.process.utils.WxMpUtil;
+import com.github.binarywang.wxpay.config.WxPayConfig;
+import com.github.binarywang.wxpay.service.WxPayService;
 import com.google.common.collect.Maps;
+
 import me.chanjar.weixin.mp.api.WxMpConfigStorage;
 import me.chanjar.weixin.mp.api.WxMpService;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Autu Generated .
@@ -129,6 +133,16 @@ public class WechatPublicAccountService extends Model<WechatPublicAccount> {
         Record record = getAccountByUserId(userId);
         return WxMpUtil.buildConfigStorage(record);
     }
+    /**
+     * 根据userId获得公众号配置
+     *
+     * @param userId
+     * @return
+     */
+    public WxPayConfig getWxPayConfigStorageByUserId(String userId) {
+    	Record record = getAccountByUserId(userId);
+    	return WxMpUtil.buildPayConfigStorage(record);
+    }
 
     /**
      * 根据ID获得公众号配置
@@ -165,6 +179,15 @@ public class WechatPublicAccountService extends Model<WechatPublicAccount> {
     public WxMpService getWxMpService(String userId) {
         return WxMpUtil.getWxMpServiceByConfig(getWxMpConfigStorageByUserId(userId));
     }
+    /**
+     * 获得公众号
+     *
+     * @param userId
+     * @return
+     */
+    public WxPayService getWxPayService(String userId) {
+    	return WxMpUtil.getWxPayServiceByConfig(getWxPayConfigStorageByUserId(userId));
+    }
 
     /**
      * 通过公众号ID，获得公众号接口
@@ -174,6 +197,15 @@ public class WechatPublicAccountService extends Model<WechatPublicAccount> {
      */
     public WxMpService getWxMpServiceByAccountId(String accountId) {
         return WxMpUtil.getWxMpService(getAccountByAccountId(accountId));
+    }
+    /**
+     * 通过公众号ID，获得支付接口
+     *
+     * @param accountId
+     * @return
+     */
+    public WxPayService getWxPayServiceByAccountId(String accountId) {
+    	return WxMpUtil.getWxPayService(getAccountByAccountId(accountId));
     }
 
     /**
