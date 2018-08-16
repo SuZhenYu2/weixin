@@ -3,6 +3,7 @@ package com.fengjx.modules.wechat.controller.api;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.Inet4Address;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +22,10 @@ import com.alibaba.fastjson.JSON;
 import com.fengjx.modules.wechat.bean.Result;
 import com.fengjx.modules.wechat.bean.SendWxMsgBean;
 import com.fengjx.modules.wechat.service.WechatPublicAccountService;
+import com.github.binarywang.wxpay.bean.notify.WxScanPayNotifyResult;
+import com.github.binarywang.wxpay.bean.order.WxPayAppOrderResult;
+import com.github.binarywang.wxpay.bean.request.WxPayUnifiedOrderRequest;
+import com.github.binarywang.wxpay.constant.WxPayConstants.SignType;
 import com.github.binarywang.wxpay.service.WxPayService;
 
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -27,6 +33,7 @@ import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 @Controller
+@RequestMapping("${clientApi}")
 public class ClientApiController {
 	@Autowired
 	private WechatPublicAccountService publicAccountService;
@@ -34,7 +41,7 @@ public class ClientApiController {
 	 * 客户端 调用微信  接口认证
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "${clientApi}/getQrCode")
+	@RequestMapping(value = "getQrCode")
 	public void getQrCode(String userId,String param,HttpServletResponse response) throws IOException {
 		String res =null;
 		OutputStream os =response.getOutputStream();
@@ -67,7 +74,7 @@ public class ClientApiController {
 	 * 客户端 调用微信  接口认证
 	 * @throws IOException 
 	 */
-	@RequestMapping(value = "${clientApi}/getPayUrl")
+	@RequestMapping(value = "getPayUrl")
 	public void getPayUrl(String userId,String param,HttpServletResponse response) throws IOException {
 		String res =null;
 		OutputStream os =response.getOutputStream();
@@ -95,7 +102,7 @@ public class ClientApiController {
 		os.flush();
 		
 	}
-	@RequestMapping(value = "${clientApi}/getUserInfo")
+	@RequestMapping(value = "getUserInfo")
 	@ResponseBody
 	public Result getUserInfo(String userId,String openId,HttpServletResponse response) throws IOException {
 
@@ -121,7 +128,7 @@ public class ClientApiController {
 
 
 	}
-	@RequestMapping(value = "${clientApi}/sendMsgToWx")
+	@RequestMapping(value = "sendMsgToWx")
 	@ResponseBody
 	public Result wxMpTemplateMessage(@RequestBody String body ,HttpServletResponse response) throws IOException {
 		
@@ -152,8 +159,37 @@ public class ClientApiController {
 		
 		
 	}
-	
+	@RequestMapping(value = "notice")
+	@ResponseBody
+  public String notice(@RequestBody  String request) {
+		System.out.println(request);
+ 
+ 	     WxScanPayNotifyResult wxScanPayNotifyResult = WxScanPayNotifyResult.fromXML(request, WxScanPayNotifyResult.class);
+ 	     
+  	return wxScanPayNotifyResult.getXmlString();
+		
+	}
 
+	@RequestMapping(value = "getPayInfoNew/{userId}")
+	@ResponseBody
+	public Result getPayInfoNew(@PathVariable("userId") String userId,
+			WxPayUnifiedOrderRequest wxPayUnifiedOrderRequest) throws IOException {
+		try {
+			if (StringUtils.isEmpty(userId)) {
+				throw new Exception(" userId 不能为空 ");
+			}
+			if (publicAccountService.getAccountByUserId(userId) == null) {
+				throw new Exception(" 未找到相关配置  ");
+			}
+			WxPayService wxPayService = publicAccountService.getWxPayService(userId);
+			wxPayUnifiedOrderRequest.setSpbillCreateIp(Inet4Address.getLocalHost().getHostAddress());
+			wxPayUnifiedOrderRequest.setSignType(SignType.MD5);
+			WxPayAppOrderResult wxPayAppOrderResult = wxPayService.createOrder(wxPayUnifiedOrderRequest);
+			return Result.renderSuccess(wxPayAppOrderResult);
+		} catch (Exception e) {
+			return Result.renderError(e.getMessage());
+		}
+	}
 	@RequestMapping(value = "${clientApi}/getPayInfo")
 	@ResponseBody
 	public Result getPayInfo(
@@ -229,4 +265,5 @@ public class ClientApiController {
 		
 		
 	}
+	
 }
